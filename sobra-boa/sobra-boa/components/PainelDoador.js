@@ -11,6 +11,7 @@ export default function PainelDoador({ usuario }) {
   const [ofertas, setOfertas] = useState([]);
   const [mensagem, setMensagem] = useState("");
 
+  //carrega ofertas do usuário
   async function carregar() {
     try {
       setOfertas(await requisicao(`/api/usuarios/${usuario.id}/ofertas`));
@@ -23,6 +24,7 @@ export default function PainelDoador({ usuario }) {
     carregar();
   }, []);
 
+  //publica a oferta chamando requisicao.js
   async function publicar(e) {
     e.preventDefault();
     setMensagem("");
