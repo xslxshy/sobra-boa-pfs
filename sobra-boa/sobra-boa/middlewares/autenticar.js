@@ -2,6 +2,7 @@ import { ErroHttp } from "./erros";
 import { Usuario } from "../models";
 import { verificarToken } from "../lib/token";
 
+//valida se o token é válido, se o usuário existe e se o perfil do usuário tem permissão para acessar a rota
 export function autenticar(handler, perfis) {
   return async (req, ctx) => {
     const cabecalho = req.headers.get("authorization") || "";

@@ -15,12 +15,14 @@ export default function Login() {
   async function entrar(e) {
     e.preventDefault();
     setErro("");
+    //chama requisicao.js
     try {
       const dados = await requisicao("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, senha })
       });
+      //armazena o token e o usuário no localStorage
       localStorage.setItem("token", dados.token);
       localStorage.setItem("usuario", JSON.stringify(dados.usuario));
       window.location.href = "/painel";

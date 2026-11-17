@@ -11,6 +11,7 @@ export default function Ofertas() {
   const [precisaVoluntario, setPrecisaVoluntario] = useState(true);
   const [mensagem, setMensagem] = useState("");
 
+  //chama requisicao.js
   async function carregar() {
     try {
       setOfertas(await requisicao(`/api/ofertas?status=disponivel&cidade=${cidade}`));
@@ -19,14 +20,17 @@ export default function Ofertas() {
     }
   }
 
+  //carrega o usuario do localStorage
   useEffect(() => {
     setUsuario(JSON.parse(localStorage.getItem("usuario") || "null"));
   }, []);
 
+  //carrega as ofertas quando a cidade mudar
   useEffect(() => {
     carregar();
   }, [cidade]);
 
+  //reserva a oferta chamando enviarAcao
   async function reservar(id) {
     setMensagem("");
     try {

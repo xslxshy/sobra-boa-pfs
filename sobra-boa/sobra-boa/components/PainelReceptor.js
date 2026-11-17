@@ -8,6 +8,7 @@ export default function PainelReceptor({ usuario }) {
   const [ofertas, setOfertas] = useState([]);
   const [mensagem, setMensagem] = useState("");
 
+  //carrega as ofertas do usuário
   async function carregar() {
     try {
       setOfertas(await requisicao(`/api/usuarios/${usuario.id}/ofertas`));
@@ -16,10 +17,12 @@ export default function PainelReceptor({ usuario }) {
     }
   }
 
+  //carrega as ofertas do usuário
   useEffect(() => {
     carregar();
   }, []);
 
+  //função para confirmar o recebimento de uma oferta
   async function confirmar(id) {
     try {
       await enviarAcao(id, "entregar");

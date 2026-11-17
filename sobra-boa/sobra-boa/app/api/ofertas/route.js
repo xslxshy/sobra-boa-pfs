@@ -5,4 +5,4 @@ import { listar, criar } from "../../../controllers/ofertaController";
 export const dynamic = "force-dynamic";
 
 export const GET = tratarErros(listar);
-export const POST = tratarErros(autenticar(criar, ["doador"]));
+export const POST = tratarErros(autenticar(criar, ["doador"])); 

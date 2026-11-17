@@ -1,6 +1,8 @@
 export async function requisicao(url, opcoes) {
   const token = localStorage.getItem("token");
   const headers = { ...(opcoes && opcoes.headers) };
+
+  //adiciona o token de autenticação no cabeçalho da requisição
   if (token) headers.Authorization = `Bearer ${token}`;
 
   let resposta;
@@ -16,6 +18,7 @@ export async function requisicao(url, opcoes) {
   } catch {
     dados = null;
   }
+
 
   if (!resposta.ok) {
     const mensagem = (dados && dados.erro) || `Erro no servidor (código ${resposta.status}). Veja a mensagem no terminal do VSCode.`;

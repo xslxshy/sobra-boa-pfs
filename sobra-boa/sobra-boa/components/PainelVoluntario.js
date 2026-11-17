@@ -9,6 +9,7 @@ export default function PainelVoluntario({ usuario }) {
   const [minhas, setMinhas] = useState([]);
   const [mensagem, setMensagem] = useState("");
 
+  //carrega as ofertas do usuário
   async function carregar() {
     try {
       const reservadas = await requisicao("/api/ofertas?status=reservada&precisaVoluntario=true&semVoluntario=true");
@@ -19,10 +20,12 @@ export default function PainelVoluntario({ usuario }) {
     }
   }
 
+  //carrega as ofertas do usuário
   useEffect(() => {
     carregar();
   }, []);
 
+  //função para confirmar o recebimento de uma oferta
   async function agir(id, acao) {
     try {
       await enviarAcao(id, acao);

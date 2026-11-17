@@ -13,6 +13,7 @@ export default function Cadastro() {
     setForm({ ...form, [campo]: valor });
   }
 
+  //verifica se o cep é válido
   async function buscarCep() {
     setErro("");
     const cep = form.cep.replace(/\D/g, "");
@@ -20,6 +21,7 @@ export default function Cadastro() {
       setErro("O CEP deve ter 8 números.");
       return;
     }
+    //busca o cep na api do viacep
     try {
       const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const dados = await resposta.json();
@@ -36,12 +38,14 @@ export default function Cadastro() {
   async function cadastrar(e) {
     e.preventDefault();
     setErro("");
+    //chama requisicao.js
     try {
       const dados = await requisicao("/api/usuarios", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form)
       });
+      //salva o token e o usuário no localStorage e redireciona para a página do painel
       localStorage.setItem("token", dados.token);
       localStorage.setItem("usuario", JSON.stringify(dados.usuario));
       window.location.href = "/painel";
