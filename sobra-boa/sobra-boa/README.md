@@ -13,14 +13,34 @@ npm run dev
 
 a aplicação abre em: http://localhost:3000
 
-Contas de teste: padaria@teste.com (doador) // ong@teste.com (receptor) // voluntario@teste.com (voluntário)
+Contas de teste (senha 123456): padaria@teste.com (doador) // ong@teste.com (receptor) // voluntario@teste.com (voluntário)
 
-Os dados ficam no arquivo `data/db.json`
+Opcional: copiar `.env.example` para `.env.local` para trocar o segredo do JWT (`JWT_SECRET`) e o tempo de expiração do token (`JWT_EXPIRA`, padrão `2h`)
 
-## Como usar
-1. O doador entra e publica um alimento no painel.
-2. O receptor entra, vai em Ofertas e reserva (marcando se precisa de voluntário).
-3. O voluntário entra, aceita a coleta no painel e confirma a entrega.
+## Tecnologias
+Next.js 14, Sequelize (ORM) e SQLite. Senhas com bcryptjs e autenticação com jsonwebtoken
+
+O banco fica em `data/db.sqlite` criado automaticamente na primeira execução junto com as contas de teste.
+
+## estruturação
+- `app/api`: rotas da API (só encaminham para os controllers)
+- `controllers`: regras de negócio de cada recurso
+- `middlewares`: `autenticar.js` (valida o JWT e o perfil) e `erros.js` (respostas de erro em JSON)
+- `models`: modelos Sequelize (`Usuario`, `Oferta`) e associações
+- `lib`: conexão com o banco, geração do token e funções auxiliares
+- `app` e `components`: telas
+
+## Relações
+- `Usuario` tem muitas `Oferta` em três papéis: `ofertasDoadas` (doador), `reservas` (receptor) e `coletas` (voluntário)
+- `Oferta` pertence a um `doador`, a um `receptor` (opcional) e a um `voluntario` (opcional)
+
+## Autenticação
+1. No cadastro (`POST /api/usuarios`) a senha é criptografada com bcrypt antes de ser salva
+2. No login (`POST /api/auth/login`) a senha é conferida e a API devolve um token JWT
+3. As telas guardam o token e o enviam no cabeçalho `Authorization: Bearer <token>`
+4. Nas rotas privadas o middleware `autenticar` valida o token e o perfil do usuário
+
+Para demonstrar o token expirado, rode com `JWT_EXPIRA=10s` no `.env.local`, faça login, espere 10 segundos e chame `GET /api/auth/me`.
 
 ## API externa
 ViaCEP: usada no cadastro para buscar rua, bairro e cidade a partir do CEP
@@ -29,29 +49,34 @@ https://viacep.com.br/
 
 ## API própria
 
-### POST /api/usuarios
+**POST /api/usuarios** — Público
 
-Cadastra um usuário (nome, e-mail, perfil, telefone, CEP, rua, número, bairro e cidade)
+Cadastra usuário e retorna usuário e token
 
-### POST /api/login
+**POST /api/auth/login** — Público
 
-Realiza o login utilizando o e-mail do usuário
+Realiza login com e-mail e senha
 
-### GET /api/ofertas
+**GET /api/auth/me** — Token
 
-Lista as ofertas cadastradas. Possui filtros opcionais por status, doadorId, receptorId, voluntarioId e cidade.
+Retorna os dados do usuário logado
 
-### POST /api/ofertas
+**GET /api/usuarios/:id/ofertas** — Token
 
-Permite que o doador publique uma oferta informando doadorId, título, descrição, quantidade, unidade e validade
+Lista as ofertas do usuário
 
-### PATCH /api/ofertas/:id
+**GET /api/ofertas** — Público
 
-Altera o estado de uma oferta. Recebe no corpo da requisição a ação desejada (reservar, aceitar, entregar ou cancelar), o usuarioId e a informação precisaVoluntario
+Lista ofertas com filtros opcionais
 
-### DELETE /api/ofertas/:id?usuarioId=1
+**POST /api/ofertas** — Doador
 
-Permite que o doador exclua uma oferta informando seu ID de usuário
+Publica uma oferta
 
-## Limitações
-O login é só por e-mail (sem senha) e os dados ficam em arquivo JSON
+**PATCH /api/ofertas/:id** — Token
+
+Reserva, aceita, entrega ou cancela uma oferta
+
+**DELETE /api/ofertas/:id** — Doador
+
+Exclui uma oferta
