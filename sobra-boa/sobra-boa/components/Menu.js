@@ -11,6 +11,7 @@ export default function Menu() {
 
   function sair() {
     localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
     window.location.href = "/";
   }
 

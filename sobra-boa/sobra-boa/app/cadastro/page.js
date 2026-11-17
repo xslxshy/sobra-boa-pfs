@@ -4,7 +4,7 @@ import { requisicao } from "../../lib/requisicao";
 
 export default function Cadastro() {
   const [form, setForm] = useState({
-    nome: "", email: "", perfil: "doador", telefone: "",
+    nome: "", email: "", senha: "", perfil: "doador", telefone: "",
     cep: "", rua: "", numero: "", bairro: "", cidade: ""
   });
   const [erro, setErro] = useState("");
@@ -17,19 +17,19 @@ export default function Cadastro() {
     setErro("");
     const cep = form.cep.replace(/\D/g, "");
     if (cep.length !== 8) {
-      setErro("O CEP deve ter 8 números");
+      setErro("O CEP deve ter 8 números.");
       return;
     }
     try {
       const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const dados = await resposta.json();
       if (dados.erro) {
-        setErro("CEP não encontrado");
+        setErro("CEP não encontrado.");
         return;
       }
       setForm({ ...form, cep, rua: dados.logradouro, bairro: dados.bairro, cidade: dados.localidade });
     } catch {
-      setErro("Não foi possível consultar o cep");
+      setErro("Não foi possível consultar o CEP agora.");
     }
   }
 
@@ -42,7 +42,8 @@ export default function Cadastro() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form)
       });
-      localStorage.setItem("usuario", JSON.stringify(dados));
+      localStorage.setItem("token", dados.token);
+      localStorage.setItem("usuario", JSON.stringify(dados.usuario));
       window.location.href = "/painel";
     } catch (e) {
       setErro(e.message);
@@ -68,6 +69,10 @@ export default function Cadastro() {
         <div>
           <label>E-mail</label>
           <input type="email" value={form.email} onChange={(e) => mudar("email", e.target.value)} required />
+        </div>
+        <div>
+          <label>Senha (mínimo 6 caracteres)</label>
+          <input type="password" value={form.senha} onChange={(e) => mudar("senha", e.target.value)} required minLength={6} />
         </div>
         <div>
           <label>Telefone</label>

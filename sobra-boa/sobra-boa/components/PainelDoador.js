@@ -13,7 +13,7 @@ export default function PainelDoador({ usuario }) {
 
   async function carregar() {
     try {
-      setOfertas(await requisicao(`/api/ofertas?doadorId=${usuario.id}`));
+      setOfertas(await requisicao(`/api/usuarios/${usuario.id}/ofertas`));
     } catch (e) {
       setMensagem(e.message);
     }
@@ -30,7 +30,7 @@ export default function PainelDoador({ usuario }) {
       await requisicao("/api/ofertas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, doadorId: usuario.id })
+        body: JSON.stringify({ ...form, validade: new Date(form.validade).toISOString() })
       });
       setForm(vazio);
       setMensagem("Alimento publicado!");
@@ -42,7 +42,7 @@ export default function PainelDoador({ usuario }) {
 
   async function cancelar(id) {
     try {
-      await enviarAcao(id, "cancelar", usuario.id);
+      await enviarAcao(id, "cancelar");
       carregar();
     } catch (e) {
       setMensagem(e.message);
@@ -51,7 +51,7 @@ export default function PainelDoador({ usuario }) {
 
   async function excluir(id) {
     try {
-      await requisicao(`/api/ofertas/${id}?usuarioId=${usuario.id}`, { method: "DELETE" });
+      await requisicao(`/api/ofertas/${id}`, { method: "DELETE" });
       carregar();
     } catch (e) {
       setMensagem(e.message);

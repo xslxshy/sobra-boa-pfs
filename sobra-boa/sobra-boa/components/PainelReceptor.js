@@ -10,7 +10,7 @@ export default function PainelReceptor({ usuario }) {
 
   async function carregar() {
     try {
-      setOfertas(await requisicao(`/api/ofertas?receptorId=${usuario.id}`));
+      setOfertas(await requisicao(`/api/usuarios/${usuario.id}/ofertas`));
     } catch (e) {
       setMensagem(e.message);
     }
@@ -22,7 +22,7 @@ export default function PainelReceptor({ usuario }) {
 
   async function confirmar(id) {
     try {
-      await enviarAcao(id, "entregar", usuario.id);
+      await enviarAcao(id, "entregar");
       carregar();
     } catch (e) {
       setMensagem(e.message);

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const segredo = process.env.JWT_SECRET || "segredo-de-desenvolvimento";
+const segredo = process.env.JWT_SECRET || "secretkey";
 
 export function gerarToken(usuario) {
   return jwt.sign({ id: usuario.id, perfil: usuario.perfil }, segredo, {

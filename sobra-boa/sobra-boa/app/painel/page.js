@@ -10,7 +10,7 @@ export default function Painel() {
 
   useEffect(() => {
     const salvo = JSON.parse(localStorage.getItem("usuario") || "null");
-    if (!salvo) {
+    if (!salvo || !localStorage.getItem("token")) {
       window.location.href = "/login";
       return;
     }
@@ -18,7 +18,7 @@ export default function Painel() {
     setCarregado(true);
   }, []);
 
-  if (!carregado) return <main><p>Carregando..</p></main>;
+  if (!carregado) return <main><p>Carregando...</p></main>;
 
   return (
     <main>

@@ -11,9 +11,9 @@ export default function PainelVoluntario({ usuario }) {
 
   async function carregar() {
     try {
-      const reservadas = await requisicao("/api/ofertas?status=reservada");
-      setPendentes(reservadas.filter((o) => o.precisaVoluntario && !o.voluntarioId));
-      setMinhas(await requisicao(`/api/ofertas?voluntarioId=${usuario.id}`));
+      const reservadas = await requisicao("/api/ofertas?status=reservada&precisaVoluntario=true&semVoluntario=true");
+      setPendentes(reservadas);
+      setMinhas(await requisicao(`/api/usuarios/${usuario.id}/ofertas`));
     } catch (e) {
       setMensagem(e.message);
     }
@@ -25,7 +25,7 @@ export default function PainelVoluntario({ usuario }) {
 
   async function agir(id, acao) {
     try {
-      await enviarAcao(id, acao, usuario.id);
+      await enviarAcao(id, acao);
       carregar();
     } catch (e) {
       setMensagem(e.message);
